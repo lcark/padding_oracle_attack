@@ -1,0 +1,4 @@
+requests
+grequests
+pycryptodome
+falsk
