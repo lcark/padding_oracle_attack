@@ -4,7 +4,7 @@ a library for padding oracle attack
 Payload_model is a abstract class handling all details of padding oracle attack algorithm.
 You should specify a subclass of payload_model and change some import methods. You can customize it to fit different environment.
 
-basic usge
+basic usage
 ---
 ```python
 from padding_oracle_attack import payload_model
