@@ -24,9 +24,9 @@ if __name__ == "__main__":
     m = payload("3a10f84900818b1c439430600524fb0f00000000000000000000000000000000")
     m.run()
 ```
-![record](media/padding_snap.GIF)
+![record](https://github.com/lcark/padding_oracle_attack/raw/main/media/Fpadding_snap.GIF)
 
 result picture
 ---
 
-![result](media/result.png)
+![result](https://github.com/lcark/padding_oracle_attack/raw/main/media/result.png)

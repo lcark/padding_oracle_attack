@@ -3,9 +3,15 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+requires = [
+    "requests>=2.21.0",
+    "grequests>=0.6.0",
+    "pycryptodome>=3.9.7",
+    "flask8>=3.8.4"
+]
 setuptools.setup(
-    name="lcark", # Replace with your own username
-    version="0.0.1",
+    name="padding-oracle-attack", # Replace with your own username
+    version="0.0.4",
     author="lcark",
     author_email="lcark@foxmail.com",
     description="a library for padding oracle attack",
@@ -19,4 +25,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.3',
+    install_requires=requires,
 )
