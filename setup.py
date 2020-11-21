@@ -11,7 +11,7 @@ requires = [
 ]
 setuptools.setup(
     name="padding-oracle-attack", # Replace with your own username
-    version="0.0.4",
+    version="0.0.5",
     author="lcark",
     author_email="lcark@foxmail.com",
     description="a library for padding oracle attack",

@@ -30,3 +30,9 @@ result picture
 ---
 
 ![result](https://github.com/lcark/padding_oracle_attack/raw/main/media/result.png)
+
+install
+---
+```bash
+pip install padding-oracle-attack
+```
