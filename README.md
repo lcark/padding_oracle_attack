@@ -12,6 +12,17 @@ import grequests
 from grequests import request
 
 class payload(payload_model):
+    def padding_ok(self, resp:Response):
+        if resp.status_code == 200:
+            return True
+        else:
+            return False
+
+    def recover_fake_data(self, req:Request, fake_datas):
+        for fake_data in fake_datas:
+            if bytes.hex(fake_data) in req.url:
+                return fake_data
+        return None
 
     def make_request(self, fake_data) -> request:
         params = {
