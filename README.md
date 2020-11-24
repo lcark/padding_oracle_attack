@@ -45,7 +45,7 @@ result picture
 load session
 ---
 When you break down the execution(CTRL-C), it can save session that you used to attack automaticly.You can load session like below.
-```
+```python
 payload = Payload(bytes.hex(exp), fake=True)
 payload.load()
 payload.run()

