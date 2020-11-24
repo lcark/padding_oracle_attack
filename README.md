@@ -4,6 +4,9 @@ a library for padding oracle attack concurrently
 Payload_model is a abstract class handling all details of padding oracle attack algorithm.
 You should specify a subclass of payload_model and change some import methods. You can customize it to fit different environment.
 
+[![](https://img.shields.io/pypi/v/padding-oracle-attack.svg)](https://pypi.org/project/padding-oracle-attack/)
+[![](https://img.shields.io/pypi/pyversions/padding-oracle-attack.svg)](https://pypi.org/project/padding-oracle-attack/)
+
 basic usage
 ---
 ```python
