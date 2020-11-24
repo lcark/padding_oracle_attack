@@ -32,7 +32,7 @@ class payload_model(object):
     ```
 
     """
-    def __init__(self, data, fake=False):
+    def __init__(self, data="", fake=False):
         """
         :param data fake data or encryted data\n
         :param fake to forge data or get plain data

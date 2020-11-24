@@ -9,6 +9,7 @@ You should specify a subclass of payload_model and change some import methods. Y
 
 Usage
 ---
+Get clear text from cipher text
 ```python
 from padding_oracle_attack import payload_model
 import grequests
@@ -40,6 +41,13 @@ if __name__ == "__main__":
 ```
 ![record](https://github.com/lcark/padding_oracle_attack/raw/main/media/padding_snap.GIF)
 
+Fake cipher text via clear text
+```python
+...
+if __name__ == "__main__":
+    m = payload("3a10f84900818b", fake=True)
+    m.run()
+```
 Result
 ---
 
@@ -47,7 +55,7 @@ Result
 
 Save and Load session
 ---
-When you break down the execution(CTRL-C), it can save session that you used to attack automaticly.You can load session like below.
+When breaking down the execution(CTRL-C), it will save session to file 'padding-session.txt' automaticly.You can load session like below.
 ```python
 payload = Payload(bytes.hex(exp), fake=True)
 payload.load()
