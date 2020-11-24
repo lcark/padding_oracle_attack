@@ -1,4 +1,4 @@
-a library for padding oracle attack concurrently
+A library for padding oracle attack concurrently
 ---
 
 Payload_model is a abstract class handling all details of padding oracle attack algorithm.
@@ -7,7 +7,7 @@ You should specify a subclass of payload_model and change some import methods. Y
 [![](https://img.shields.io/pypi/v/padding-oracle-attack.svg)](https://pypi.org/project/padding-oracle-attack/)
 [![](https://img.shields.io/pypi/pyversions/padding-oracle-attack.svg)](https://pypi.org/project/padding-oracle-attack/)
 
-basic usage
+Usage
 ---
 ```python
 from padding_oracle_attack import payload_model
@@ -40,12 +40,12 @@ if __name__ == "__main__":
 ```
 ![record](https://github.com/lcark/padding_oracle_attack/raw/main/media/padding_snap.GIF)
 
-result picture
+Result
 ---
 
 ![result](https://github.com/lcark/padding_oracle_attack/raw/main/media/result.png)
 
-load session
+Save and Load session
 ---
 When you break down the execution(CTRL-C), it can save session that you used to attack automaticly.You can load session like below.
 ```python
@@ -54,7 +54,7 @@ payload.load()
 payload.run()
 ```
 
-install
+Installation
 ---
 ```bash
 pip install padding-oracle-attack
