@@ -1,4 +1,4 @@
-a library for padding oracle attack
+a library for padding oracle attack concurrently
 ---
 
 Payload_model is a abstract class handling all details of padding oracle attack algorithm.
@@ -41,6 +41,15 @@ result picture
 ---
 
 ![result](https://github.com/lcark/padding_oracle_attack/raw/main/media/result.png)
+
+load session
+---
+When you break down the execution(CTRL-C), it can save session that you used to attack automaticly.You can load session like below.
+```
+payload = Payload(bytes.hex(exp), fake=True)
+payload.load()
+payload.run()
+```
 
 install
 ---

