@@ -9,7 +9,7 @@ You should specify a subclass of payload_model and change some import methods. Y
 
 Usage
 ---
-Get clear text from cipher text
+### Get clear text from cipher text
 ```python
 from padding_oracle_attack import payload_model
 import grequests
@@ -41,8 +41,10 @@ if __name__ == "__main__":
 ```
 ![record](https://github.com/lcark/padding_oracle_attack/raw/main/media/padding_snap.GIF)
 
-Fake cipher text via clear text
+### Fake cipher text via clear text
 ```python
+...
+# some code same as the former
 ...
 if __name__ == "__main__":
     m = payload("3a10f84900818b", fake=True)
