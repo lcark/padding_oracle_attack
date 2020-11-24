@@ -6,12 +6,11 @@ with open("README.md", "r") as fh:
 requires = [
     "requests>=2.21.0",
     "grequests>=0.6.0",
-    "pycryptodome>=3.9.7",
-    "flask8>=3.8.4"
+    "pycryptodome>=3.9.7"
 ]
 setuptools.setup(
     name="padding-oracle-attack", # Replace with your own username
-    version="0.0.5",
+    version="0.0.7",
     author="lcark",
     author_email="lcark@foxmail.com",
     description="a library for padding oracle attack",

