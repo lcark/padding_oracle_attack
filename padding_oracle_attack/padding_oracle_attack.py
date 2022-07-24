@@ -190,7 +190,7 @@ class payload_model(object):
                 with open("padding-session.txt", "w") as f:
                     f.write(dump)
                 os._exit(-1)
-
+        print("\n"*10)
         if self.fake:
             data = b"".join(self.encrypt_block)
             print("\nfake_data: ", end="")
@@ -203,6 +203,7 @@ class payload_model(object):
 
         resp = grequests.map([self.make_request(data)])[0]
         print("content: " + resp.text)
+        return data
             
     def dump(self) -> str:
         return json.dumps(
